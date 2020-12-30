@@ -1,5 +1,7 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using PooronaBot.Exceptions;
 
@@ -12,37 +14,42 @@ namespace PooronaBot
         // TODO: There's probably a better way to do this.
         public static Infector Instance {get; private set;}
         
-        private IDiscordClient _client;
+        private IGuild _guild;
         private IRole _virusRole;
         private IRole _deadRole;
+        private List<ulong> _susceptibleRoleIDs;
         private int _limit;
+        private Random _random = new Random();
 
         private Infector(
-            IDiscordClient client,
+            IGuild guild,
             IRole virusRole,
             IRole deadRole,
+            List<ulong> susceptibleRoleIDs,
             int limit)
         {
-            _client = client;
+            _guild = guild;
             _virusRole = virusRole;
             _deadRole = deadRole;
+            _susceptibleRoleIDs = susceptibleRoleIDs;
             _limit = limit;
         }
 
         public Infector CreateInstance(
-            IDiscordClient client,
+            IGuild guild,
             IRole virusRole,
             IRole deadRole,
+            List<ulong> susceptibleRoleIDs,
             int limit)
         {
             if (Instance != null) return Instance;
 
-            Instance = new Infector(client, virusRole, deadRole, limit);
+            Instance = new Infector(guild, virusRole, deadRole, susceptibleRoleIDs, limit);
             return Instance;
         }
         public async Task Infect(IGuildUser user)
         {
-            var members = await user.Guild.GetUsersAsync(CacheMode.AllowDownload);
+            var members = await _guild.GetUsersAsync(CacheMode.AllowDownload);
             int numInfected = 
                (from member in members
                 where member.RoleIds.Contains(_virusRole.Id)
@@ -60,6 +67,20 @@ namespace PooronaBot
         public async Task Kill(IGuildUser user)
         {
             await user.AddRoleAsync(_deadRole);
+        }
+
+        public async Task InfectRandom()
+        {
+            var members = await _guild.GetUsersAsync(CacheMode.AllowDownload);
+            
+            var eligible = 
+                from member in members
+                where member.RoleIds.Intersect(_susceptibleRoleIDs).Count() > 0
+                select member;
+
+            var eligibleArray = eligible.ToArray();
+            var randomUser = eligibleArray[_random.Next(eligibleArray.Count())];
+            await Infect(randomUser);
         }
     }
 }
