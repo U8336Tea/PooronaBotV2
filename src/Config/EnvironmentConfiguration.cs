@@ -7,14 +7,26 @@ namespace PooronaBot.Config
     {
         public EnvironmentConfiguration() { }
 
-        public string Get(string key)
+        public object Get(string key)
         {
-            return Environment.GetEnvironmentVariable(key);
+            string envvar = Environment.GetEnvironmentVariable(key);
+            try {
+                return JsonSerializer.Deserialize<object>(json: envvar, options: null);
+            } catch (JsonException) {
+
+            } catch (NotSupportedException) {  }
+
+            return envvar;
         }
 
         public void Set(string key, object value)
         {
-            Environment.SetEnvironmentVariable(key, value.ToString());
+            string valueString = value.ToString();
+            try {
+                valueString = JsonSerializer.Serialize(value);
+            } catch (NotSupportedException) {  }
+
+            Environment.SetEnvironmentVariable(key, valueString);
         }
     }
 }

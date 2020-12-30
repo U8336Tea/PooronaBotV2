@@ -22,7 +22,7 @@ namespace PooronaBot
             var client = new DiscordSocketClient();
             client.Log += LogAsync;
 
-            await client.LoginAsync(TokenType.Bot, configuration["Token"]);
+            await client.LoginAsync(TokenType.Bot, configuration.GetString("Token"));
             await client.StartAsync();
 
             // Initialize commands
