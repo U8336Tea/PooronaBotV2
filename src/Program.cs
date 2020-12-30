@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+using PooronaBot.Config;
 using PooronaBot.Commands;
 
 using Discord;
@@ -15,11 +16,13 @@ namespace PooronaBot
 
         static async Task RealMain()
         {
+            IConfiguration configuration = new EnvironmentConfiguration();
+
             // Initialize client
             var client = new DiscordSocketClient();
             client.Log += LogAsync;
 
-            await client.LoginAsync(TokenType.Bot, "MzkyODUzNTAzMDAzMDY2Mzcx.Wjm_VQ.v6a2tSZ9rBhWmfwwhUzfWFO8CkQ");
+            await client.LoginAsync(TokenType.Bot, configuration["Token"]);
             await client.StartAsync();
 
             // Initialize commands
