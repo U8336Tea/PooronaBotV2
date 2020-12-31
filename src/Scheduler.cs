@@ -98,6 +98,13 @@ namespace PooronaBot
                     database.HashDelete("deaths", user.Id);
                 }
             }
+
+            // Save Redis databases
+            foreach (var endpoint in _databaseConnection.GetEndPoints())
+            {
+                var server = _databaseConnection.GetServer(endpoint);
+                server.Save(SaveType.BackgroundSave);
+            }
         }
     }
 }
