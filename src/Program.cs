@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using PooronaBot.Config;
 using PooronaBot.Commands;
 
+using StackExchange.Redis;
+
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -60,7 +62,16 @@ namespace PooronaBot
             var curedRole = guild.GetRole(config.GetID("cured-role"));
             var susceptible = config.GetIDList("susceptible-roles");
             var limit = config.GetInt("infection-limit");
-            Infector.CreateInstance(guild, virusRole, deadRole, curedRole, susceptible, limit);
+            var redisURL = config.GetString("REDIS_URL");
+            ConnectionMultiplexer connection = null;
+
+            if (!string.IsNullOrEmpty(redisURL)) connection = ConnectionMultiplexer.Connect(redisURL);
+
+            Infector.CreateInstance(guild, virusRole, deadRole, curedRole, susceptible, limit, connection);
+            
+            var interval = config.GetInt("connection-interval");
+            var deathHours = config.GetInt("death-hours");
+            Scheduler.CreateInstance(interval, _client, guild, deadRole, deathHours, connection);
 
             return Task.CompletedTask;
         }
