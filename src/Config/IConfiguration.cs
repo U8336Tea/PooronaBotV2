@@ -2,9 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace PooronaBot.Database
+namespace PooronaBot.Config
 {
-    public interface IDatabase
+    public interface IConfiguration
     {
         abstract object Get(string key);
         abstract void Set(string key, object value);
