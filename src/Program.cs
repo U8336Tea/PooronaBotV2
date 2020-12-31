@@ -67,9 +67,9 @@ namespace PooronaBot
 
             if (!string.IsNullOrEmpty(redisURL)) connection = ConnectionMultiplexer.Connect(redisURL);
 
-            Infector.CreateInstance(guild, virusRole, deadRole, curedRole, susceptible, limit, connection);
+            Infector.CreateInstance(_client, guild, virusRole, deadRole, curedRole, susceptible, limit, connection);
             
-            var interval = config.GetInt("connection-interval");
+            var interval = config.GetInt("infection-interval");
             var deathHours = config.GetInt("death-hours");
             Scheduler.CreateInstance(interval, _client, guild, deadRole, deathHours, connection);
 
