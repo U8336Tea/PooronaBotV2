@@ -9,7 +9,7 @@ using Discord.Commands;
 
 namespace PooronaBot.Commands
 {
-    [RequireRich(776680578254766101)]
+    [RequireRich]
     [RequireContext(ContextType.Guild)]
     public class DiseaseModule : ModuleBase<SocketCommandContext> 
     {

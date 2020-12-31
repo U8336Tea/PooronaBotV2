@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
+using PooronaBot.Config;
+
 using Discord;
 using Discord.Commands;
 
@@ -9,21 +11,21 @@ namespace PooronaBot.Commands.Preconditions
 {
     public class RequireRichAttribute : PreconditionAttribute
     {
-        // TODO: Have this reference a config file instead.
-        private readonly ulong _roleID;
+        private IConfiguration _config = new EnvironmentConfiguration();
 
-        public RequireRichAttribute(ulong roleID) => _roleID = roleID;
+        public RequireRichAttribute() {  }
 
         public override Task<PreconditionResult> CheckPermissionsAsync(
             ICommandContext context,
             CommandInfo command,
             IServiceProvider services)
         {
+            var roleID = _config.GetID("rich-role");
             if (!(context.User is IGuildUser user)) {
                 return Task.FromResult(PreconditionResult.FromError("Don't DM me bitch."));
             }
 
-            return Task.FromResult(user.RoleIds.Contains(_roleID) ?
+            return Task.FromResult(user.RoleIds.Contains(roleID) ?
                 PreconditionResult.FromSuccess() :
                 PreconditionResult.FromError("Try again when you aren't p*or <:cringe:793938801088659479>"));
         }
