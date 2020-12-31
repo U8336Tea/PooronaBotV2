@@ -5,7 +5,7 @@ namespace PooronaBot.Exceptions
     [System.Serializable]
     public class LimitException : Exception
     {
-        public LimitException() : base("Stop infecting so many people, you greedy asshole.") { }
+        public LimitException() : this("Stop infecting so many people, you greedy asshole.") { }
         public LimitException(string message) : base(message) { }
         public LimitException(string message, System.Exception inner) : base(message, inner) { }
         protected LimitException(
