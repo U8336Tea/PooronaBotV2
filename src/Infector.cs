@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using PooronaBot.Exceptions;
 
 using Discord;
+using Discord.WebSocket;
 
 using StackExchange.Redis;
 
@@ -26,6 +27,7 @@ namespace PooronaBot
         private ConnectionMultiplexer _databaseConnection;
 
         private Infector(
+            DiscordSocketClient client,
             IGuild guild,
             IRole virusRole,
             IRole deadRole,
@@ -41,9 +43,12 @@ namespace PooronaBot
             _susceptibleRoleIDs = susceptibleRoleIDs;
             _limit = limit;
             _databaseConnection = databaseConnection;
+
+            client.GuildMemberUpdated += RoleChanged;
         }
 
         public static Infector CreateInstance(
+            DiscordSocketClient client,
             IGuild guild,
             IRole virusRole,
             IRole deadRole,
@@ -54,7 +59,7 @@ namespace PooronaBot
         {
             if (Instance != null) return Instance;
 
-            Instance = new Infector(guild, virusRole, deadRole, curedRole, susceptibleRoleIDs, limit, databaseConnection);
+            Instance = new Infector(client, guild, virusRole, deadRole, curedRole, susceptibleRoleIDs, limit, databaseConnection);
             return Instance;
         }
         public async Task Infect(IGuildUser user)
@@ -108,6 +113,15 @@ namespace PooronaBot
             var eligibleArray = eligible.ToArray();
             var randomUser = eligibleArray[_random.Next(eligibleArray.Count())];
             await Infect(randomUser);
+        }
+
+        private async Task RoleChanged(SocketGuildUser oldUser, SocketGuildUser newUser)
+        {
+            if (oldUser.Roles == newUser.Roles) return;
+            if (oldUser.Roles.Contains(_virusRole) && !newUser.Roles.Contains(_virusRole))
+            {
+                await Disinfect(newUser);
+            }
         }
     }
 }

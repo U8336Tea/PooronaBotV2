@@ -11,6 +11,7 @@ namespace PooronaBot.Config
 
         string GetString(string key)
         {
+            if (this[key] == null) return "";
             return this[key].ToString();
         }
 
