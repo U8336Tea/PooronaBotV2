@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace PooronaBot.Config
 {
@@ -33,9 +34,15 @@ namespace PooronaBot.Config
             return DateTime.Parse(this.GetString(key));
         }
 
-        IList GetList(string key)
+        IList<ulong> GetIDList(string key)
         {
-            return (IList)this[key];
+            var list = (IList)this[key];
+            var retval = new List<ulong>();
+            foreach (var value in list) {
+                retval.Add(ulong.Parse((string)value));
+            }
+
+            return retval;
         }
 
         public object this[string key] { get => Get(key); set => Set(key, value); }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using PooronaBot.Config;
 using PooronaBot.Commands;
@@ -16,13 +17,13 @@ namespace PooronaBot
 
         static async Task RealMain()
         {
-            IConfiguration configuration = new EnvironmentConfiguration();
+            IConfiguration config = new EnvironmentConfiguration();
 
             // Initialize client
             var client = new DiscordSocketClient();
             client.Log += LogAsync;
 
-            await client.LoginAsync(TokenType.Bot, configuration.GetString("token"));
+            await client.LoginAsync(TokenType.Bot, config.GetString("token"));
             await client.StartAsync();
 
             // Initialize commands
@@ -35,6 +36,14 @@ namespace PooronaBot
 
             var commandHandler = new CommandHandler(client, commands);
             await commandHandler.InstallCommandsAsync();
+
+            // Initialize Infector
+            var guild = client.GetGuild(config.GetID("guild"));
+            var virusRole = guild.GetRole(config.GetID("infected-role"));
+            var deadRole = guild.GetRole(config.GetID("dead-role"));
+            var susceptible = config.GetIDList("susceptible-roles");
+            var limit = config.GetInt("infection-limit");
+            Infector.CreateInstance(guild, virusRole, deadRole, susceptible, limit);
 
             await Task.Delay(-1);
         }
