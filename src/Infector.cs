@@ -7,6 +7,8 @@ using PooronaBot.Exceptions;
 
 using Discord;
 
+using StackExchange.Redis;
+
 namespace PooronaBot
 {
     class Infector
@@ -21,6 +23,7 @@ namespace PooronaBot
         private IList<ulong> _susceptibleRoleIDs;
         private int _limit;
         private Random _random = new Random();
+        private ConnectionMultiplexer _databaseConnection;
 
         private Infector(
             IGuild guild,
@@ -28,7 +31,8 @@ namespace PooronaBot
             IRole deadRole,
             IRole curedRole,
             IList<ulong> susceptibleRoleIDs,
-            int limit)
+            int limit,
+            ConnectionMultiplexer databaseConnection = null)
         {
             _guild = guild;
             _virusRole = virusRole;
@@ -36,6 +40,7 @@ namespace PooronaBot
             _curedRole = curedRole;
             _susceptibleRoleIDs = susceptibleRoleIDs;
             _limit = limit;
+            _databaseConnection = databaseConnection;
         }
 
         public static Infector CreateInstance(
@@ -44,11 +49,12 @@ namespace PooronaBot
             IRole deadRole,
             IRole curedRole,
             IList<ulong> susceptibleRoleIDs,
-            int limit)
+            int limit,
+            ConnectionMultiplexer databaseConnection = null)
         {
             if (Instance != null) return Instance;
 
-            Instance = new Infector(guild, virusRole, deadRole, curedRole, susceptibleRoleIDs, limit);
+            Instance = new Infector(guild, virusRole, deadRole, curedRole, susceptibleRoleIDs, limit, databaseConnection);
             return Instance;
         }
         public async Task Infect(IGuildUser user)
@@ -62,16 +68,32 @@ namespace PooronaBot
             if (numInfected >= _limit) throw new LimitException(_limit, numInfected);
             if (user.RoleIds.Contains(_curedRole.Id)) throw new CuredException();
             await user.AddRoleAsync(_virusRole);
+
+            if (_databaseConnection == null) return;
+            var database = _databaseConnection.GetDatabase();
+            var pair = new HashEntry(user.Id, DateTime.Now.ToString());
+
+            database.HashSet("deaths", new HashEntry[1]{pair});
         }
 
         public async Task Disinfect(IGuildUser user)
         {
             await user.RemoveRoleAsync(_virusRole);
+
+            if (_databaseConnection == null) return;
+            var database = _databaseConnection.GetDatabase();
+
+            // Unschedule the user's death.
+            database.HashDelete("deaths", user.Id);
         }
 
         public async Task Kill(IGuildUser user)
         {
             await user.AddRoleAsync(_deadRole);
+
+            if (_databaseConnection == null) return;
+            var database = _databaseConnection.GetDatabase();
+            database.HashDelete("deaths", user.Id);
         }
 
         public async Task InfectRandom()
