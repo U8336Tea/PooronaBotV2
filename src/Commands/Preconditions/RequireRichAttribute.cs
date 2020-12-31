@@ -21,7 +21,7 @@ namespace PooronaBot.Commands.Preconditions
             CommandInfo command,
             IServiceProvider services)
         {
-            var roleID = _config.GetID("rich-role");
+            var roleID = _config.GetID("RICH_ROLE");
             if (!(context.User is IGuildUser user)) {
                 return Task.FromResult(PreconditionResult.FromError("Don't DM me bitch."));
             }
