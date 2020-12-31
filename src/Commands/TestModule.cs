@@ -12,9 +12,9 @@ namespace PooronaBot.Commands
     public class TestModule : ModuleBase<SocketCommandContext>
     {
         [Command("test")]
-        public async Task TestCommandAsync(IGuildUser user)
+        public async Task TestCommandAsync()
         {
-            await user.SendMessageAsync("bobobo");
+            await ReplyAsync("bababa");
         }
     }
 }

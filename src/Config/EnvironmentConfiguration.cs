@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json;
+using System.Collections.Generic;
 
 namespace PooronaBot.Config
 {
@@ -9,14 +10,7 @@ namespace PooronaBot.Config
 
         public object Get(string key)
         {
-            string envvar = Environment.GetEnvironmentVariable(key);
-            try {
-                return JsonSerializer.Deserialize<object>(json: envvar, options: null);
-            } catch (JsonException) {
-
-            } catch (NotSupportedException) {  }
-
-            return envvar;
+            return Environment.GetEnvironmentVariable(key);
         }
 
         public void Set(string key, object value)
@@ -27,6 +21,11 @@ namespace PooronaBot.Config
             } catch (NotSupportedException) {  }
 
             Environment.SetEnvironmentVariable(key, valueString);
+        }
+
+        public IList<ulong> GetIDList(string key)
+        {
+            return JsonSerializer.Deserialize<IList<ulong>>(Get(key).ToString());
         }
     }
 }
