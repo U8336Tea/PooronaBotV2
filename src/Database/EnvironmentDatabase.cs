@@ -2,11 +2,11 @@ using System;
 using System.Text.Json;
 using System.Collections.Generic;
 
-namespace PooronaBot.Config
+namespace PooronaBot.Database
 {
-    public class EnvironmentConfiguration : IConfiguration
+    public class EnvironmentDatabase : IDatabase
     {
-        public EnvironmentConfiguration() { }
+        public EnvironmentDatabase() { }
 
         public object Get(string key)
         {
