@@ -24,7 +24,7 @@ namespace PooronaBot.Commands
                 await Context.Message.AddReactionAsync(new Emoji("✅"));
             } catch (LimitException e) {
                 await Context.Message.AddReactionAsync(Emote.Parse("<:virgin:793938832868900884>"));
-                await ReplyAsync(e.Message);
+                await ReplyAsync("Don't you have anything better to do than infect people all day?");
             } catch (CuredException e) {
                 await Context.Message.AddReactionAsync(Emote.Parse("<:libertycries:794102085356355584>"));
                 await ReplyAsync(e.Message);
