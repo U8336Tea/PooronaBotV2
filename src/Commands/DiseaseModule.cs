@@ -22,9 +22,12 @@ namespace PooronaBot.Commands
             try {
                 await _infector.Infect(user);
                 await Context.Message.AddReactionAsync(new Emoji("✅"));
-            } catch (LimitException) {
+            } catch (LimitException e) {
                 await Context.Message.AddReactionAsync(Emote.Parse("<:virgin:793938832868900884>"));
-                await ReplyAsync("Stop infecting so many people, you greedy asshole.");
+                await ReplyAsync(e.Message);
+            } catch (CuredException e) {
+                await Context.Message.AddReactionAsync(Emote.Parse("<:libertycries:794102085356355584>"));
+                await ReplyAsync(e.Message);
             }
         }
 

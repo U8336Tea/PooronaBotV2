@@ -17,6 +17,7 @@ namespace PooronaBot
         private IGuild _guild;
         private IRole _virusRole;
         private IRole _deadRole;
+        private IRole _curedRole;
         private IList<ulong> _susceptibleRoleIDs;
         private int _limit;
         private Random _random = new Random();
@@ -25,12 +26,14 @@ namespace PooronaBot
             IGuild guild,
             IRole virusRole,
             IRole deadRole,
+            IRole curedRole,
             IList<ulong> susceptibleRoleIDs,
             int limit)
         {
             _guild = guild;
             _virusRole = virusRole;
             _deadRole = deadRole;
+            _curedRole = curedRole;
             _susceptibleRoleIDs = susceptibleRoleIDs;
             _limit = limit;
         }
@@ -39,12 +42,13 @@ namespace PooronaBot
             IGuild guild,
             IRole virusRole,
             IRole deadRole,
+            IRole curedRole,
             IList<ulong> susceptibleRoleIDs,
             int limit)
         {
             if (Instance != null) return Instance;
 
-            Instance = new Infector(guild, virusRole, deadRole, susceptibleRoleIDs, limit);
+            Instance = new Infector(guild, virusRole, deadRole, curedRole, susceptibleRoleIDs, limit);
             return Instance;
         }
         public async Task Infect(IGuildUser user)
@@ -56,6 +60,7 @@ namespace PooronaBot
                 select member).Count();
 
             if (numInfected >= _limit) throw new LimitException(_limit, numInfected);
+            if (user.RoleIds.Contains(_curedRole.Id)) throw new CuredException();
             await user.AddRoleAsync(_virusRole);
         }
 

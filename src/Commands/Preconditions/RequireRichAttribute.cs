@@ -11,6 +11,7 @@ namespace PooronaBot.Commands.Preconditions
 {
     public class RequireRichAttribute : PreconditionAttribute
     {
+        // TODO: Allow configuration to be passed in, for possible configuration file, etc.
         private IConfiguration _config = new EnvironmentConfiguration();
 
         public RequireRichAttribute() {  }
