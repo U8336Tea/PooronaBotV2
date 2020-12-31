@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-using PooronaBot.Config;
+using PooronaBot.Database;
 using PooronaBot.Commands;
 
 using Discord;
@@ -18,7 +18,7 @@ namespace PooronaBot
 
         static async Task RealMain()
         {
-            IConfiguration config = new EnvironmentConfiguration();
+            IDatabase config = new EnvironmentDatabase();
 
             // Initialize client
             _client = new DiscordSocketClient(new DiscordSocketConfig
@@ -29,7 +29,7 @@ namespace PooronaBot
                                 GatewayIntents.GuildMembers |
                                 GatewayIntents.GuildMessages,
             });
-            
+
             _client.Log += LogAsync;
             _client.Ready += ReadyAsync;
 
@@ -51,7 +51,7 @@ namespace PooronaBot
         }
         
         private static Task ReadyAsync() {
-            IConfiguration config = new EnvironmentConfiguration();
+            IDatabase config = new EnvironmentDatabase();
 
             // Initialize Infector
             var guild = _client.GetGuild(config.GetID("guild"));

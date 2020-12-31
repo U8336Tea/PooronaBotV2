@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-using PooronaBot.Config;
+using PooronaBot.Database;
 
 using Discord;
 using Discord.Commands;
@@ -11,7 +11,7 @@ namespace PooronaBot.Commands.Preconditions
 {
     public class RequireRichAttribute : PreconditionAttribute
     {
-        private IConfiguration _config = new EnvironmentConfiguration();
+        private IDatabase _config = new EnvironmentDatabase();
 
         public RequireRichAttribute() {  }
 
