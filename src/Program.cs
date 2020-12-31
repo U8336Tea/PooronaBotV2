@@ -35,7 +35,7 @@ namespace PooronaBot
             _client.Log += LogAsync;
             _client.Ready += ReadyAsync;
 
-            await _client.LoginAsync(TokenType.Bot, config.GetString("token"));
+            await _client.LoginAsync(TokenType.Bot, config.GetString("TOKEN"));
             await _client.StartAsync();
 
             // Initialize commands
@@ -56,12 +56,12 @@ namespace PooronaBot
             IConfiguration config = new EnvironmentConfiguration();
 
             // Initialize Infector
-            var guild = _client.GetGuild(config.GetID("guild"));
-            var virusRole = guild.GetRole(config.GetID("infected-role"));
-            var deadRole = guild.GetRole(config.GetID("dead-role"));
-            var curedRole = guild.GetRole(config.GetID("cured-role"));
-            var susceptible = config.GetIDList("susceptible-roles");
-            var limit = config.GetInt("infection-limit");
+            var guild = _client.GetGuild(config.GetID("GUILD"));
+            var virusRole = guild.GetRole(config.GetID("INFECTED_ROLE"));
+            var deadRole = guild.GetRole(config.GetID("DEAD_ROLE"));
+            var curedRole = guild.GetRole(config.GetID("CURED_ROLE"));
+            var susceptible = config.GetIDList("SUSCEPTIBLE_ROLES");
+            var limit = config.GetInt("INFECTION_LIMIT");
             var redisURL = config.GetString("REDIS_URL");
             ConnectionMultiplexer connection = null;
 
@@ -69,8 +69,8 @@ namespace PooronaBot
 
             Infector.CreateInstance(_client, guild, virusRole, deadRole, curedRole, susceptible, limit, connection);
             
-            var interval = config.GetInt("infection-interval");
-            var deathHours = config.GetInt("death-hours");
+            var interval = config.GetInt("INFECTION_INTERVAL");
+            var deathHours = config.GetInt("DEATH_HOURS");
             Scheduler.CreateInstance(interval, _client, guild, deadRole, deathHours, connection);
 
             return Task.CompletedTask;
