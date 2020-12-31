@@ -17,7 +17,7 @@ namespace PooronaBot
         private IGuild _guild;
         private IRole _virusRole;
         private IRole _deadRole;
-        private List<ulong> _susceptibleRoleIDs;
+        private IList<ulong> _susceptibleRoleIDs;
         private int _limit;
         private Random _random = new Random();
 
@@ -25,7 +25,7 @@ namespace PooronaBot
             IGuild guild,
             IRole virusRole,
             IRole deadRole,
-            List<ulong> susceptibleRoleIDs,
+            IList<ulong> susceptibleRoleIDs,
             int limit)
         {
             _guild = guild;
@@ -35,11 +35,11 @@ namespace PooronaBot
             _limit = limit;
         }
 
-        public Infector CreateInstance(
+        public static Infector CreateInstance(
             IGuild guild,
             IRole virusRole,
             IRole deadRole,
-            List<ulong> susceptibleRoleIDs,
+            IList<ulong> susceptibleRoleIDs,
             int limit)
         {
             if (Instance != null) return Instance;
