@@ -23,6 +23,11 @@ namespace PooronaBot.Config
             return float.Parse(this.GetString(key));
         }
 
+        ulong GetID(string key)
+        {
+            return ulong.Parse(this.GetString(key));
+        }
+
         DateTime GetDateTime(string key)
         {
             return DateTime.Parse(this.GetString(key));
