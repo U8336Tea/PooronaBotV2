@@ -14,7 +14,7 @@ namespace PooronaBot.Commands
         [Command("test")]
         public async Task TestCommandAsync()
         {
-            await ReplyAsync("bababa");
+            await ReplyAsync("yes");
         }
     }
 }
