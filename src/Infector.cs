@@ -94,11 +94,8 @@ namespace PooronaBot
 
         public async Task Kill(IGuildUser user)
         {
+            await Disinfect(user);
             await user.AddRoleAsync(_deadRole);
-
-            if (_databaseConnection == null) return;
-            var database = _databaseConnection.GetDatabase();
-            database.HashDelete("deaths", user.Id);
         }
 
         public async Task InfectRandom()
