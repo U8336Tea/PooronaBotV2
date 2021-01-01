@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using PooronaBot.Exceptions;
 
 using Discord;
+using Discord.Net;
 using Discord.WebSocket;
 
 using StackExchange.Redis;
@@ -74,13 +75,19 @@ namespace PooronaBot
             if (user.RoleIds.Contains(_curedRole.Id)) throw new CuredException();
             await user.AddRoleAsync(_virusRole);
 
-            var hours = Scheduler.Instance.DeathHours;
-            await user.SendMessageAsync($"You have been infected with the virus! You will die within {hours} hours.");
+            try {
+                await user.SendMessageAsync($"You have been infected with the virus!");
+            } catch (HttpException e) when (e.DiscordCode == 50007) {  }
 
             if (_databaseConnection == null) return;
+
+            var hours = Scheduler.Instance.DeathHours;
+            try {
+                await user.SendMessageAsync($"You will die within {hours} hours.");
+            } catch (HttpException e) when (e.DiscordCode == 50007) {  }
+
             var database = _databaseConnection.GetDatabase();
             var pair = new HashEntry(user.Id, DateTime.Now.ToString());
-
             database.HashSet("deaths", new HashEntry[1]{pair});
         }
 
