@@ -32,6 +32,7 @@ namespace PooronaBot
         private Scheduler(double infectInterval, IDiscordClient client)
         {
             _infectTimer = new Timer(infectInterval);
+            _infectTimer.AutoReset = true;
             _infectTimer.Elapsed += InfectTimerElapsed;
             _infectTimer.Start();
 
@@ -53,6 +54,7 @@ namespace PooronaBot
             _databaseConnection = databaseConnection;
 
             _killTimer = new Timer(30 * 60 * 1000);
+            _killTimer.AutoReset = true;
             _killTimer.Elapsed += KillTimerElapsed;
             _killTimer.Start();
         }
