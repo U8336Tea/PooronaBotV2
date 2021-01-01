@@ -17,7 +17,10 @@ namespace PooronaBot.Commands
 
         [Command("infect")]
         [Summary("Infects someone.")]
-        public async Task InfectUserAsync([Summary("The user to infect.")] IGuildUser user)
+        public async Task InfectUserAsync(
+            [Summary("The user to infect.")]
+            [Remainder]
+            IGuildUser user)
         {
             try {
                 await _infector.Infect(user);
@@ -33,7 +36,10 @@ namespace PooronaBot.Commands
 
         [Command("disinfect")]
         [Summary("Disinfects someone.")]
-        public async Task DisinfectUserAsync([Summary("The user to disinfect.")] IGuildUser user)
+        public async Task DisinfectUserAsync(
+            [Summary("The user to disinfect.")]
+            [Remainder]
+            IGuildUser user)
         {
             await _infector.Disinfect(user);
             await Context.Message.AddReactionAsync(new Emoji("✅"));
@@ -42,7 +48,10 @@ namespace PooronaBot.Commands
         [Command("kill")]
         [RequireUserPermission(GuildPermission.ManageRoles)]
         [Summary("Kills someone.")]
-        public async Task KillUserAsync([Summary("The user to kill.")] IGuildUser user)
+        public async Task KillUserAsync(
+            [Summary("The user to kill.")]
+            [Remainder]
+            IGuildUser user)
         {
             await _infector.Kill(user);
             await Context.Message.AddReactionAsync(new Emoji("✅"));
