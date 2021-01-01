@@ -74,6 +74,9 @@ namespace PooronaBot
             if (user.RoleIds.Contains(_curedRole.Id)) throw new CuredException();
             await user.AddRoleAsync(_virusRole);
 
+            var hours = Scheduler.Instance.DeathHours;
+            await user.SendMessageAsync($"You have been infected with the virus! You will die within {hours} hours.");
+
             if (_databaseConnection == null) return;
             var database = _databaseConnection.GetDatabase();
             var pair = new HashEntry(user.Id, DateTime.Now.ToString());
