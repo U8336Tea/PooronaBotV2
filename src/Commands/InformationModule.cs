@@ -25,7 +25,9 @@ namespace PooronaBot.Commands
                 select $"{user.Username}#{user.Discriminator} ({user.Nickname})";
 
             var message = string.Join("\n", infectedNames);
-            if (message.Length > 2000) {
+            if (infectedNames.Count() == 0){
+                await ReplyAsync("Literally no one is infected.");
+            } else if (message.Length > 2000) {
                 using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(message))) {
                     await Context.Channel.SendFileAsync(stream, "infected.txt");
                 }
