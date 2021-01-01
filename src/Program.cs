@@ -71,7 +71,7 @@ namespace PooronaBot
             
             var interval = config.GetInt("INFECTION_INTERVAL");
             var deathHours = config.GetInt("DEATH_HOURS");
-            Scheduler.CreateInstance(interval, _client, guild, deadRole, deathHours, connection);
+            Scheduler.CreateInstance(interval, _client, guild, deathHours, connection);
 
             return Task.CompletedTask;
         }

@@ -23,7 +23,6 @@ namespace PooronaBot
         private Timer _killTimer;
         private IDiscordClient _client;
         private IGuild _guild;
-        private IRole _deadRole;
         private ConnectionMultiplexer _databaseConnection;
 
         // TODO: There's probably a better way to do this.
@@ -43,13 +42,11 @@ namespace PooronaBot
             double infectInterval,
             IDiscordClient client,
             IGuild guild,
-            IRole deadRole,
             int deathHours,
             ConnectionMultiplexer databaseConnection)
             : this(infectInterval, client)
         {
             _guild = guild;
-            _deadRole = deadRole;
             DeathHours = deathHours;
             _databaseConnection = databaseConnection;
 
@@ -63,14 +60,13 @@ namespace PooronaBot
             double infectInterval,
             IDiscordClient client,
             IGuild guild,
-            IRole deadRole,
             int deathHours = -1,
             ConnectionMultiplexer databaseConnection = null)
         {
             if (Instance != null) return Instance;
 
             if (databaseConnection == null) Instance = new Scheduler(infectInterval, client);
-            else Instance = new Scheduler(infectInterval, client, guild, deadRole, deathHours, databaseConnection);
+            else Instance = new Scheduler(infectInterval, client, guild, deathHours, databaseConnection);
 
             return Instance;
         }
@@ -84,10 +80,7 @@ namespace PooronaBot
         {
             var database = _databaseConnection.GetDatabase();
             var users = _guild.GetUsersAsync(CacheMode.AllowDownload).GetAwaiter().GetResult();
-            var potentials =
-                from user in users
-                where user.RoleIds.Contains(_deadRole.Id)
-                select user;
+            var potentials = Infector.Instance.ListInfected().GetAwaiter().GetResult();
 
             foreach (var user in potentials) {
                 var info = database.HashGet("deaths", user.Id);
