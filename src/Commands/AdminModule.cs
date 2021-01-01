@@ -17,20 +17,20 @@ namespace PooronaBot.Commands
 
         [Command("changeinterval")]
         [Summary("Changes the infection interval.")]
-        public Task ChangeIntervalAsync([Summary("The new interval in milliseconds.")] double interval)
+        public async Task ChangeIntervalAsync([Summary("The new interval in milliseconds.")] double interval)
         {
             Scheduler.Instance.InfectInterval = interval;
             _config.Set("infection-interval", interval);
-            return Task.CompletedTask;
+            await Context.Message.AddReactionAsync(new Emoji("✅"));
         }
 
         [Command("changedeathtime")]
         [Summary("Changes the time it takes for a user to die.")]
-        public Task ChangeDeathTimeAsync([Summary("The death time in hours.")] int time)
+        public async Task ChangeDeathTimeAsync([Summary("The death time in hours.")] int time)
         {
             Scheduler.Instance.DeathHours = time;
             _config.Set("death-hours", time);
-            return Task.CompletedTask;
+            await Context.Message.AddReactionAsync(new Emoji("✅"));
         }
     }
 }
