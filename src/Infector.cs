@@ -65,11 +65,7 @@ namespace PooronaBot
         }
         public async Task Infect(IGuildUser user)
         {
-            var members = await _guild.GetUsersAsync(CacheMode.AllowDownload);
-            int numInfected = 
-               (from member in members
-                where member.RoleIds.Contains(_virusRole.Id)
-                select member).Count();
+            int numInfected = (await ListInfected()).Count();
 
             if (numInfected >= _limit) throw new LimitException(_limit, numInfected);
             if (user.RoleIds.Contains(_curedRole.Id)) throw new CuredException();
@@ -106,6 +102,14 @@ namespace PooronaBot
         {
             await Disinfect(user);
             await user.AddRoleAsync(_deadRole);
+        }
+
+        public async Task<IEnumerable<IGuildUser>> ListInfected()
+        {
+            var members = await _guild.GetUsersAsync(CacheMode.AllowDownload);
+            return from member in members
+                where member.RoleIds.Contains(_virusRole.Id)
+                select member;
         }
 
         public async Task InfectRandom()
