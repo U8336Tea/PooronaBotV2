@@ -45,6 +45,7 @@ namespace PooronaBot.Commands
         public async Task KillUserAsync([Summary("The user to kill.")] IGuildUser user)
         {
             await _infector.Kill(user);
+            await Context.Message.AddReactionAsync(new Emoji("✅"));
         }
     }
 }
