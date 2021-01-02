@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 
 using PooronaBot.Config;
+using PooronaBot.Commands.Preconditions;
 
 using Discord;
 using Discord.Commands;
@@ -10,6 +11,7 @@ namespace PooronaBot.Commands
     [Group("admin")]
     [RequireContext(ContextType.Guild)]
     [RequireUserPermission(GuildPermission.ManageRoles)]
+    [RequireCorrectGuild]
     public class AdminModule : ModuleBase<SocketCommandContext>
     {
         // TODO: Allow configuration to be passed in, for possible configuration file, etc.
