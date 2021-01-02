@@ -18,12 +18,13 @@ namespace PooronaBot
         // TODO: There's probably a better way to do this.
         public static Infector Instance {get; private set;}
         
+        public int InfectLimit;
+
         private IGuild _guild;
         private IRole _virusRole;
         private IRole _deadRole;
         private IRole _curedRole;
         private IList<ulong> _susceptibleRoleIDs;
-        private int _limit;
         private Random _random = new Random();
         private ConnectionMultiplexer _databaseConnection;
 
@@ -42,7 +43,7 @@ namespace PooronaBot
             _deadRole = deadRole;
             _curedRole = curedRole;
             _susceptibleRoleIDs = susceptibleRoleIDs;
-            _limit = limit;
+            InfectLimit = limit;
             _databaseConnection = databaseConnection;
 
             client.GuildMemberUpdated += RoleChanged;
@@ -67,7 +68,7 @@ namespace PooronaBot
         {
             int numInfected = (await ListInfected()).Count();
 
-            if (numInfected >= _limit) throw new LimitException(_limit, numInfected);
+            if (numInfected >= InfectLimit) throw new LimitException(InfectLimit, numInfected);
             if (user.RoleIds.Contains(_curedRole.Id)) throw new CuredException();
             await user.AddRoleAsync(_virusRole);
 

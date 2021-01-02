@@ -20,7 +20,7 @@ namespace PooronaBot.Commands
         public async Task ChangeIntervalAsync([Summary("The new interval in milliseconds.")] double interval)
         {
             Scheduler.Instance.InfectInterval = interval;
-            _config.Set("infection-interval", interval);
+            _config.Set("INFECTION_INTERVAL", interval);
             await Context.Message.AddReactionAsync(new Emoji("✅"));
         }
 
@@ -29,7 +29,16 @@ namespace PooronaBot.Commands
         public async Task ChangeDeathTimeAsync([Summary("The death time in hours.")] int time)
         {
             Scheduler.Instance.DeathHours = time;
-            _config.Set("death-hours", time);
+            _config.Set("DEATH_HOURS", time);
+            await Context.Message.AddReactionAsync(new Emoji("✅"));
+        }
+
+        [Command("changeinfectlimit")]
+        [Summary("Changes the number of people who can be infected.")]
+        public async Task ChangeInfectLimitAsync([Summary("The new limit.")] int limit)
+        {
+            Infector.Instance.InfectLimit = limit;
+            _config.Set("INFECTION_LIMIT", limit);
             await Context.Message.AddReactionAsync(new Emoji("✅"));
         }
     }
