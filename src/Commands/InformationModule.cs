@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using PooronaBot.Config;
 
+using Discord;
 using Discord.Commands;
 
 namespace PooronaBot.Commands
@@ -22,7 +23,7 @@ namespace PooronaBot.Commands
             var infected = await Infector.Instance.ListInfected();
             var infectedNames =
                 from user in infected
-                select $"{user.Username}#{user.Discriminator} ({user.Nickname})";
+                select $"<@{user.Id}>";
 
             var message = string.Join("\n", infectedNames);
             if (infectedNames.Count() == 0){
@@ -32,7 +33,8 @@ namespace PooronaBot.Commands
                     await Context.Channel.SendFileAsync(stream, "infected.txt");
                 }
             } else {
-                await ReplyAsync(message);
+                var allowedMentions = new AllowedMentions(AllowedMentionTypes.None);
+                await ReplyAsync(message, allowedMentions: allowedMentions);
             }
         }
     }
