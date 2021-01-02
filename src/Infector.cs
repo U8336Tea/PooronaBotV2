@@ -120,6 +120,7 @@ namespace PooronaBot
             var eligible = 
                 from member in members
                 where member.RoleIds.Intersect(_susceptibleRoleIDs).Count() > 0
+                    && !member.RoleIds.Contains(_deadRole.Id)
                 select member;
 
             var eligibleArray = eligible.ToArray();
