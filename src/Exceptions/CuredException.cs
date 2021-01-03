@@ -1,4 +1,3 @@
-
 namespace PooronaBot.Exceptions
 {
     [System.Serializable]
