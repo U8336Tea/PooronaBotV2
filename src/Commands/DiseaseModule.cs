@@ -25,7 +25,7 @@ namespace PooronaBot.Commands
                 var perpetrator = Context.User;
                 await _infector.Infect(user, $"Infected by {perpetrator.Username}#{perpetrator.Discriminator}");
                 await Context.Message.AddReactionAsync(new Emoji("✅"));
-            } catch (LimitException e) {
+            } catch (LimitException) {
                 await Context.Message.AddReactionAsync(Emote.Parse("<:virgin:793938832868900884>"));
                 await ReplyAsync("Don't you have anything better to do than infect people all day?");
             } catch (CuredException e) {
