@@ -21,6 +21,7 @@ namespace PooronaBot
 
         private Timer _infectTimer;
         private Timer _killTimer;
+        private Timer _pruneTimer;
         private IDiscordClient _client;
         private IGuild _guild;
         private ConnectionMultiplexer _databaseConnection;
@@ -54,6 +55,12 @@ namespace PooronaBot
             _killTimer.AutoReset = true;
             _killTimer.Elapsed += KillTimerElapsed;
             _killTimer.Start();
+
+            PruneTimerElapsed(null, null);
+            _pruneTimer = new Timer(3 * 60 * 60 * 1000);
+            _pruneTimer.AutoReset = true;
+            _pruneTimer.Elapsed += PruneTimerElapsed;
+            _pruneTimer.Start();
         }
 
         public static Scheduler CreateInstance(
@@ -99,6 +106,20 @@ namespace PooronaBot
             {
                 var server = _databaseConnection.GetServer(endpoint);
                 server.Save(SaveType.BackgroundSave);
+            }
+        }
+
+        private void PruneTimerElapsed(object source, ElapsedEventArgs e)
+        {
+            var database = _databaseConnection.GetDatabase();
+            var deaths = database.HashGetAll("deaths");
+            
+            foreach (var death in deaths) {
+                var id = ulong.Parse(death.Name);
+                var user = _guild.GetUserAsync(id, CacheMode.AllowDownload).GetAwaiter().GetResult();
+                if (user == null) {
+                    database.HashDelete("deaths", id);
+                }
             }
         }
     }
