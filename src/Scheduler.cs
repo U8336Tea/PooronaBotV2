@@ -1,10 +1,7 @@
 using System;
-using System.Linq;
 using System.Timers;
-using System.Threading.Tasks;
 
 using Discord;
-using Discord.WebSocket;
 
 using StackExchange.Redis;
 

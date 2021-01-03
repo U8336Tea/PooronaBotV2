@@ -1,10 +1,8 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 using PooronaBot.Config;
 
-using Discord;
 using Discord.Commands;
 
 namespace PooronaBot.Commands.Preconditions
