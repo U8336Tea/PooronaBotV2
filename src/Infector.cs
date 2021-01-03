@@ -64,13 +64,15 @@ namespace PooronaBot
             Instance = new Infector(client, guild, virusRole, deadRole, curedRole, susceptibleRoleIDs, limit, databaseConnection);
             return Instance;
         }
-        public async Task Infect(IGuildUser user)
+        public async Task Infect(IGuildUser user, string reason = null)
         {
             int numInfected = (await ListInfected()).Count();
 
             if (numInfected >= InfectLimit) throw new LimitException(InfectLimit, numInfected);
             if (user.RoleIds.Contains(_curedRole.Id)) throw new CuredException();
-            await user.AddRoleAsync(_virusRole);
+            await user.AddRoleAsync(_virusRole, new RequestOptions {
+                AuditLogReason = reason,
+            });
 
             try {
                 await user.SendMessageAsync($"You have been infected with the virus!");
@@ -88,9 +90,11 @@ namespace PooronaBot
             database.HashSet("deaths", new HashEntry[1]{pair});
         }
 
-        public async Task Disinfect(IGuildUser user)
+        public async Task Disinfect(IGuildUser user, string reason = null)
         {
-            await user.RemoveRoleAsync(_virusRole);
+            await user.RemoveRoleAsync(_virusRole, new RequestOptions{
+                AuditLogReason = reason,
+            });
 
             if (_databaseConnection == null) return;
             var database = _databaseConnection.GetDatabase();
@@ -125,7 +129,7 @@ namespace PooronaBot
 
             var eligibleArray = eligible.ToArray();
             var randomUser = eligibleArray[_random.Next(eligibleArray.Count())];
-            await Infect(randomUser);
+            await Infect(randomUser, "Random infect.");
         }
 
         private async Task RoleChanged(SocketGuildUser oldUser, SocketGuildUser newUser)
