@@ -23,7 +23,8 @@ namespace PooronaBot.Commands
             IGuildUser user)
         {
             try {
-                await _infector.Infect(user);
+                var perpetrator = Context.User;
+                await _infector.Infect(user, $"Infected by {perpetrator.Username}#{perpetrator.Discriminator}");
                 await Context.Message.AddReactionAsync(new Emoji("✅"));
             } catch (LimitException e) {
                 await Context.Message.AddReactionAsync(Emote.Parse("<:virgin:793938832868900884>"));
@@ -41,7 +42,8 @@ namespace PooronaBot.Commands
             [Remainder]
             IGuildUser user)
         {
-            await _infector.Disinfect(user);
+            var perpetrator = Context.User;
+            await _infector.Disinfect(user, $"Disinfected by {perpetrator.Username}#{perpetrator.Discriminator}");
             await Context.Message.AddReactionAsync(new Emoji("✅"));
         }
 
