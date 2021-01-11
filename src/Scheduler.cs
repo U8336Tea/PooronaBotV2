@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Timers;
 
 using Discord;
@@ -21,6 +22,7 @@ namespace PooronaBot
         private Timer _pruneTimer;
         private IDiscordClient _client;
         private IGuild _guild;
+        private ulong _deadId;
         private ConnectionMultiplexer _databaseConnection;
 
         // TODO: There's probably a better way to do this.
@@ -40,11 +42,13 @@ namespace PooronaBot
             double infectInterval,
             IDiscordClient client,
             IGuild guild,
+            ulong deadId,
             int deathHours,
             ConnectionMultiplexer databaseConnection)
             : this(infectInterval, client)
         {
             _guild = guild;
+            _deadId = deadId;
             DeathHours = deathHours;
             _databaseConnection = databaseConnection;
 
@@ -64,13 +68,14 @@ namespace PooronaBot
             double infectInterval,
             IDiscordClient client,
             IGuild guild,
+            ulong deadId = 0,
             int deathHours = -1,
             ConnectionMultiplexer databaseConnection = null)
         {
             if (Instance != null) return Instance;
 
             if (databaseConnection == null) Instance = new Scheduler(infectInterval, client);
-            else Instance = new Scheduler(infectInterval, client, guild, deathHours, databaseConnection);
+            else Instance = new Scheduler(infectInterval, client, guild, deadId, deathHours, databaseConnection);
 
             return Instance;
         }
@@ -114,7 +119,7 @@ namespace PooronaBot
             foreach (var death in deaths) {
                 var id = ulong.Parse(death.Name);
                 var user = _guild.GetUserAsync(id, CacheMode.AllowDownload).GetAwaiter().GetResult();
-                if (user == null) {
+                if (user == null || !user.RoleIds.Contains(_deadId)) {
                     database.HashDelete("deaths", id);
                 }
             }
